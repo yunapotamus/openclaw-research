@@ -1,0 +1,11 @@
+{
+  "name": "deep-research",
+  "version": "1.0.0",
+  "description": "Multi-step research with parallel sub-agents and citation tracking",
+  "author": "yunapotamus",
+  "license": "MIT",
+  "tags": ["research", "web-search", "citations", "parallel"],
+  "openclaw": {
+    "minVersion": "2026.1.0"
+  }
+}
