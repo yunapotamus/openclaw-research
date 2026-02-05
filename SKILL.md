@@ -32,6 +32,19 @@ First, determine the research mode:
 
 If the user hasn't specified, choose based on question complexity.
 
+## Search Provider Detection
+
+Before Phase 1, run a single short `web_search` query related to the topic.
+Check the response format to detect the search provider:
+
+- **Perplexity Sonar**: Returns synthesized prose with inline citations and
+  source URLs already extracted. You do NOT need to `web_fetch` individual pages.
+- **Standard search** (Brave, Google, etc.): Returns a list of result links
+  with short snippets. You MUST `web_fetch` pages to get full content.
+
+Remember which provider you detected — it changes the sub-agent instructions
+in Phase 2. You can reuse this initial search result as part of Phase 2.
+
 ---
 
 ## PHASE 1: PLAN
@@ -75,7 +88,9 @@ For **each** sub-question, spawn a background sub-agent:
 sessions_spawn background:true timeout:120
 ```
 
-Give each sub-agent this prompt (fill in `<sub-question>`):
+Give each sub-agent the appropriate prompt based on the detected provider:
+
+**Standard search prompt** (Brave, Google, etc.):
 
 ```
 Research the following question thoroughly:
@@ -86,6 +101,34 @@ Instructions:
    from different angles (try synonyms, related terms, specific vs broad)
 2. For each search, web_fetch the 3 most relevant results
 3. Extract key findings with source attribution
+4. Note when sources disagree or data is uncertain
+
+Return your findings in this EXACT format:
+
+## Findings
+- [Finding 1] (Source: <url>)
+- [Finding 2] (Source: <url>)
+- [Finding 3] (Source: <url>)
+
+## Sources
+1. <title> — <url> — <brief description>
+2. <title> — <url> — <brief description>
+
+Be thorough. Prefer recent sources (last 1-2 years). Note disagreements.
+```
+
+**Perplexity Sonar prompt** (search results are already synthesized):
+
+```
+Research the following question thoroughly:
+"<sub-question>"
+
+Instructions:
+1. Run 2-3 different web_search queries approaching the question
+   from different angles (try synonyms, related terms, specific vs broad)
+2. DO NOT web_fetch — search results already include synthesized content
+   with source URLs. Extract findings directly from search responses.
+3. Collect all source URLs from the search response citations
 4. Note when sources disagree or data is uncertain
 
 Return your findings in this EXACT format:
@@ -114,7 +157,9 @@ Do the research yourself sequentially:
 
 For each sub-question:
 1. Run 2 `web_search` queries from different angles
-2. `web_fetch` the top 2-3 results from each search
+2. **Standard search**: `web_fetch` the top 2-3 results from each search
+   **Perplexity Sonar**: Skip `web_fetch` — extract findings and source
+   URLs directly from the synthesized search response
 3. Record findings with source URLs
 4. Move to the next sub-question
 
@@ -279,3 +324,5 @@ Would you like me to:
 6. **Respect the user's time.** If quick mode is more appropriate, suggest it.
 7. **No external API keys required.** Use only built-in tools: `web_search`,
    `web_fetch`, `sessions_spawn`, `read`, `write`.
+8. **Skip `web_fetch` with Perplexity Sonar.** If search results are already
+   synthesized with citations, fetching individual pages wastes time and tokens.
