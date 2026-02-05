@@ -88,9 +88,7 @@ For **each** sub-question, spawn a background sub-agent:
 sessions_spawn background:true timeout:120
 ```
 
-Give each sub-agent the appropriate prompt based on the detected provider:
-
-**Standard search prompt** (Brave, Google, etc.):
+Give each sub-agent this prompt (fill in `<sub-question>`):
 
 ```
 Research the following question thoroughly:
@@ -99,7 +97,10 @@ Research the following question thoroughly:
 Instructions:
 1. Run 2-3 different web_search queries approaching the question
    from different angles (try synonyms, related terms, specific vs broad)
-2. For each search, web_fetch the 3 most relevant results
+2. For each search:
+   - Standard search: web_fetch the 3 most relevant results
+   - Perplexity Sonar: DO NOT web_fetch — extract findings directly
+     from the synthesized search response
 3. Extract key findings with source attribution
 4. Note when sources disagree or data is uncertain
 
@@ -117,39 +118,8 @@ Return your findings in this EXACT format:
 Be thorough. Prefer recent sources (last 1-2 years). Note disagreements.
 ```
 
-**Perplexity Sonar prompt** (search results are already synthesized):
-
-```
-Research the following question thoroughly:
-"<sub-question>"
-
-Instructions:
-1. Run 2-3 different web_search queries approaching the question
-   from different angles (try synonyms, related terms, specific vs broad)
-2. DO NOT web_fetch — search results already include synthesized content
-   with source URLs. Extract findings directly from search responses.
-3. Collect all source URLs from the search response citations
-4. Note when sources disagree or data is uncertain
-
-Return your findings in this EXACT format:
-
-## Findings
-- [Finding 1] (Source: <url>)
-- [Finding 2] (Source: <url>)
-- [Finding 3] (Source: <url>)
-
-## Sources
-1. <title> — <url> — <brief description>
-2. <title> — <url> — <brief description>
-
-Be thorough. Prefer recent sources (last 1-2 years). Note disagreements.
-```
-
-After spawning all sub-agents:
-1. Inform the user: "Researching N sub-questions in parallel..."
-2. Monitor sub-agent sessions for completion
-3. If a sub-agent times out after 120s, note the gap and continue
-4. Collect all results once finished
+After spawning, inform the user: "Researching N sub-questions in parallel..."
+Monitor sessions and collect results once finished.
 
 ### Quick Mode (serial)
 
@@ -188,12 +158,6 @@ Across all sub-question results:
 - **Gaps**: Sub-questions with thin or no results
 - **Confidence**: Rate each major finding (high / medium / low) based
   on source quality and agreement
-
-### 3d. Handle Failures
-
-- If a sub-agent timed out: note which sub-question has incomplete data
-- If a sub-question yielded no useful results: note the gap explicitly
-- Never fabricate sources or findings
 
 ---
 
@@ -335,13 +299,12 @@ Would you like me to:
 
 ## ERROR HANDLING
 
-- **Sub-agent timeout**: Log which sub-question was affected.
-  Include a "Gaps" note in the report. Offer to retry that sub-question.
-- **No search results**: Try alternative search queries (broader terms,
-  different phrasing). If still nothing, note the gap honestly.
-- **web_fetch failures**: Skip the URL, note it, try the next result.
+- **Sub-agent timeout**: Note which sub-question has incomplete data.
+  Include in "Gaps" section. Offer to retry.
+- **No search results**: Try broader/alternative queries. If still nothing,
+  note the gap — never fabricate sources or findings.
+- **web_fetch failures**: Skip the URL, try the next result.
 - **All sub-agents fail**: Fall back to quick mode automatically.
-  Inform the user: "Parallel research failed; switching to quick mode."
 
 ---
 
@@ -356,5 +319,3 @@ Would you like me to:
 6. **Respect the user's time.** If quick mode is more appropriate, suggest it.
 7. **No external API keys required.** Use only built-in tools: `web_search`,
    `web_fetch`, `sessions_spawn`, `read`, `write`.
-8. **Skip `web_fetch` with Perplexity Sonar.** If search results are already
-   synthesized with citations, fetching individual pages wastes time and tokens.
