@@ -57,7 +57,7 @@ clawhub install yunapotamus/deep-research
 Clone this repo into your OpenClaw skills directory:
 
 ```bash
-git clone https://github.com/yunapotamus/deep-research.git \
+git clone https://github.com/yunapotamus/openclaw-research.git \
   ~/.openclaw/skills/deep-research
 ```
 
@@ -175,13 +175,13 @@ The included helper script can clean up and validate reports:
 
 ```bash
 # Validate citations (check only, no changes)
-python deep-research/scripts/format-report.py research/topic/research.md --check
+python scripts/format-report.py research/topic/research.md --check
 
 # Renumber citations and deduplicate
-python deep-research/scripts/format-report.py research/topic/research.md
+python scripts/format-report.py research/topic/research.md
 
 # Export to PDF (requires pandoc)
-python deep-research/scripts/format-report.py research/topic/research.md --pdf
+python scripts/format-report.py research/topic/research.md --pdf
 ```
 
 ## Limitations
