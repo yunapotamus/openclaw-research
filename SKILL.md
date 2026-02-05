@@ -283,6 +283,38 @@ Rules:
   the saved file and chat summary
 - Include a brief caption with the topic name, not the full summary
 
+#### Slack Threading
+
+When the conversation originates from a Slack channel, use threading to
+keep the channel clean:
+
+1. **All intermediate messages go in a thread** of the original user message.
+   This includes: the research plan (Phase 1), progress updates
+   ("Researching N sub-questions..."), sub-agent results, and the
+   detailed findings. Use `thread_ts` set to the original message timestamp.
+
+2. **Only the final deliverables go to the main channel AND the thread.**
+   Specifically:
+   - The executive summary text
+   - The research file attachment
+
+   To post in both the channel and the thread, send the executive summary
+   and file to the channel (no `thread_ts`), and also post them in the
+   thread (`thread_ts` set to the original message).
+
+Example thread flow:
+```
+#channel
+├─ User: "Research solid-state batteries for EVs"
+│  ├─ [thread] Bot: "I'll investigate these 5 sub-questions... proceed?"
+│  ├─ [thread] User: "Go ahead"
+│  ├─ [thread] Bot: "Researching 5 sub-questions in parallel..."
+│  ├─ [thread] Bot: "All sub-agents complete. Synthesizing..."
+│  ├─ [thread] Bot: Executive summary + report file
+│  └─ [thread] Bot: "Would you like me to go deeper on any section?"
+├─ Bot: Executive summary + report file  ← also in main channel
+```
+
 ### 4d. Present to User
 
 Show the **Executive Summary** directly in chat, then:
