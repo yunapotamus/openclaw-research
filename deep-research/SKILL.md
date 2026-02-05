@@ -220,7 +220,25 @@ write path:"research/<topic-slug>/research.md"
 Where `<topic-slug>` is the topic in lowercase, spaces replaced with hyphens,
 special characters removed. Example: "AI Safety in 2026" → `ai-safety-in-2026`.
 
-### 4c. Present to User
+### 4c. Share via Messaging (optional)
+
+If the user asks to share the report, or if the conversation originated from
+a messaging integration, attach the saved report file. Use whichever tool
+is available:
+
+- **Slack**: `slack action:"sendMessage" to:"<channel>" content:"Research report: <topic>" mediaUrl:"file://research/<topic-slug>/research.md"`
+- **Discord**: `discord action:"sendMessage" to:"<channel>" content:"Research report: <topic>" mediaUrl:"file://research/<topic-slug>/research.md"`
+- **iMessage**: `imsg send --to "<recipient>" --text "Research report: <topic>" --file research/<topic-slug>/research.md`
+- **BlueBubbles**: `bluebubbles action:"sendAttachment" path:"research/<topic-slug>/research.md" caption:"Research report: <topic>"`
+
+Rules:
+- Only share if the user requests it or the conversation context implies it
+  (e.g., user asked from a Slack channel)
+- If the messaging tool isn't available, skip silently — just deliver via
+  the saved file and chat summary
+- Include a brief caption with the topic name, not the full summary
+
+### 4d. Present to User
 
 Show the **Executive Summary** directly in chat, then:
 
@@ -232,6 +250,7 @@ I found N sources across M sub-questions.
 Would you like me to:
 - Go deeper on any section?
 - Research additional angles?
+- Share the report to a channel or contact?
 - Export in a different format?
 ```
 
