@@ -100,9 +100,9 @@ faster results.
 ┌──────────────────────────┐
 │  PHASE 1: PLAN           │
 │  Decompose into 3-6      │
-│  sub-questions            │
-│  → Show plan to user      │
-│  → Wait for confirmation  │
+│  sub-questions           │
+│  → Show plan to user     │
+│  → Wait for confirmation │
 └──────────────┬───────────┘
                │
        ┌───────┴───────┐
@@ -113,24 +113,24 @@ faster results.
 └──────┬──────┘ └──────┬──────┘
        │               │
        ▼               ▼
-┌─────────────────┐ ┌──────────────────┐
+┌──────────────────┐ ┌──────────────────┐
 │ PHASE 2: RESEARCH│ │ PHASE 2: RESEARCH│
 │                  │ │                  │
-│ ┌─────┐ ┌─────┐│ │ For each sub-Q:  │
-│ │Sub 1│ │Sub 2││ │  web_search x2   │
-│ │agent│ │agent││ │  web_fetch top 3  │
-│ └──┬──┘ └──┬──┘│ │  Record findings  │
-│ ┌──┴──┐    │   │ │  Next sub-Q...   │
-│ │Sub 3│    │   │ └────────┬─────────┘
-│ │agent│    │   │          │
-│ └──┬──┘    │   │          │
-│    │       │   │          │
-│  ┌─┴───────┴─┐ │          │
-│  │  Collect   │ │          │
-│  │  results   │ │          │
-│  └─────┬─────┘ │          │
-└────────┼────────┘          │
-         └──────┬────────────┘
+│ ┌─────┐ ┌─────┐  │ │ For each sub-Q:  │
+│ │Sub 1│ │Sub 2│  │ │  web_search x2   │
+│ │agent│ │agent│  │ │  web_fetch top 3 │
+│ └──┬──┘ └──┬──┘  │ │  Record findings │
+│ ┌──┴──┐    │     │ │  Next sub-Q...   │
+│ │Sub 3│    │     │ └────────┬─────────┘
+│ │agent│    │     │          │
+│ └──┬──┘    │     │          │
+│    │       │     │          │
+│  ┌─┴───────┴─┐   │          │
+│  │  Collect  │   │          │
+│  │  results  │   │          │
+│  └─────┬─────┘   │          │
+└────────┼─────────┘          │
+         └──────┬─────────────┘
                 │
                 ▼
 ┌───────────────────────────────┐
